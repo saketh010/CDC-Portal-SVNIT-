@@ -1,2 +1,2 @@
 # CDC-Portal-SVNIT-
-Team Project
+Team Project for learning purpose
