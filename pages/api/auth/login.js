@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid username or password' });
+        return res.status(401).json({ message: 'Invalid password' });
       }
 
       // Generate a JWT
