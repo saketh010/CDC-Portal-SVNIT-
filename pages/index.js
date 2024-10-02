@@ -1,11 +1,11 @@
-// pages/index.js
-import Link from 'next/link';
-import styles from '../styles/Home.module.css';
+// pages/login.js
+import LoginForm from '../components/Auth/LoginForm';
+import styles from '../styles/LoginForm.module.css';
 
-export default function Home() {
+export default function LoginPage() {
   return (
     <div className={styles.container}>
-      <h1>Welcome to My Website</h1>
+      <LoginForm />
     </div>
   );
 }

@@ -17,7 +17,6 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Find the user by username
       const user = await User.findOne({ username });
       if (!user) {
         return res.status(401).json({ message: 'Invalid username' });
@@ -32,7 +31,7 @@ export default async function handler(req, res) {
       // Generate a JWT
       const token = generateToken(user);
 
-      // Set the token in an HTTP-only cookie for security
+      // Set the token in an HTTP-only cookie
       res.setHeader('Set-Cookie', cookie.serialize('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

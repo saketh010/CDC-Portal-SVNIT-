@@ -12,7 +12,6 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Reset error message
     setError('');
 
     try {
@@ -27,8 +26,7 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (res.status === 200) {
-        // Redirect to dashboard on successful login
-        router.push('/dashboard');
+        router.push('/home');
       } else {
         setError(data.message);
       }
