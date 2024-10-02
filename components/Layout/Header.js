@@ -14,8 +14,8 @@ export default function Header() {
       <nav>
         <ul className={styles.navList}>
           <li>
-            <Link href="/login">
-              Login
+            <Link href="/profile">
+              Profile
             </Link>
           </li>
           {/* Add more navigation links as needed */}

@@ -8,7 +8,6 @@ import cookie from 'cookie';
 connectToDatabase();
 
 export default async function handler(req, res) {
-
   if (req.method === 'POST') {
     const { username, password } = req.body;
 
@@ -40,7 +39,7 @@ export default async function handler(req, res) {
         path: '/',
       }));
 
-      res.status(200).json({ message: 'Login successful' });
+      res.status(200).json({ message: 'Login successful', username: user.username });
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: 'Internal Server Error' });
