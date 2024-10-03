@@ -26,6 +26,7 @@ export default function LoginForm() {
       const data = await res.json();
 
       if (res.status === 200) {
+        localStorage.setItem('username', data.username);
         router.push('/home');
       } else {
         setError(data.message);
@@ -38,7 +39,7 @@ export default function LoginForm() {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <h2 className={styles.title}>Login</h2> {/* Use the title class here */}
+      <h2 className={styles.title}>Login</h2>
       <div className={styles.inputGroup}>
         <label htmlFor="username">Username:</label>
         <input
@@ -48,7 +49,7 @@ export default function LoginForm() {
           onChange={(e) => setUsername(e.target.value)}
           required
           placeholder="Enter your username"
-          className={styles.input} // Add styling class for input
+          className={styles.input}
         />
       </div>
       <div className={styles.inputGroup}>
@@ -60,11 +61,11 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           placeholder="Enter your password"
-          className={styles.input} // Add styling class for input
+          className={styles.input}
         />
       </div>
       <button type="submit" className={styles.button}>Login</button>
-      {error && <p className={styles.error}>{error}</p>} {/* Apply error styling */}
+      {error && <p className={styles.error}>{error}</p>}
     </form>
   );
 }
