@@ -92,9 +92,8 @@ export default function HomePage() {
 
     return (
         <div>
-
             {/* Map over the cards array to return multiple card components */}
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex py-10 flex-wrap justify-center gap-4">
                 {cards.map((card) => (
                     <div key={card.id} className="card card-compact bg-base-100 w-80 shadow-md">
                         <figure>
