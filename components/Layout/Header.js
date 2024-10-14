@@ -64,8 +64,8 @@ export default function Header(){
           tabIndex={0}
           className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
           <li>
-            <a className="justify-between">
-              Profile
+            <a href='/profile' className="justify-between">
+              Student Profile
               <span className="badge"><FaRegUserCircle size={20} /></span>
             </a>
           </li>
