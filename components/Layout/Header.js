@@ -19,12 +19,12 @@ import { PiStudentBold } from "react-icons/pi";
 //         </Link>
 //       </div>
 //       <nav>
-//         <ul className={styles.navList}>
-//           <li>
-//             <Link href="/profile">
-//               Profile
-//             </Link>
-//           </li>
+  //         <ul className={styles.navList}>
+  //           <li>
+  //             <Link href="/profile">
+  //               Profile
+  //             </Link>
+  //           </li>
 //           {/* Add more navigation links as needed */}
 //         </ul>
 //       </nav>
@@ -67,11 +67,6 @@ export default function Header(){
             <a className="justify-between">
               Profile
               <span className="badge"><FaRegUserCircle size={20} /></span>
-            </a>
-          </li>
-          <li>
-            <a>Settings
-              <span className="badge"><GoGear size={20} /></span>
             </a>
           </li>
           <li>
