@@ -65,9 +65,11 @@ export default function HomePage() {
                         <div className="card-body">
                             <h2 className="card-title">{card.title}</h2>
                             <p>{card.description}</p>
-                            <div className="card-actions justify-end">
+                            <div className="card-actions justify-end flex gap-2">
                                 <button className="btn btn-important">Apply</button>
+                                <button className="btn bg-red-600 text-white hover:bg-red-400">Withdraw</button>
                             </div>
+
                         </div>
                     </div>
                 ))}
