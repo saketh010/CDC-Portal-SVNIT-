@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-export default function LoginForm() {
+export default function LoginForm({ lf }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,7 +26,11 @@ export default function LoginForm() {
 
       if (res.status === 200) {
         localStorage.setItem('username', data.username);
+        if(username === 'admin') {
+          router.push('/admin/listjob');
+        } else {
         router.push('/home');
+        }
       } else {
         setError(data.message);
       }

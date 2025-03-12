@@ -1,25 +1,25 @@
-// pages/api/jobs/[id].js
-import connectToDatabase from '../../../../lib/mongodb'; // Adjust path if necessary
-import Job from '../../../../models/Jobs.js';
+// pages/api/jobDetail.js
+import Job from '../../models/Job';
 
 export default async function handler(req, res) {
-    const {query: { id }, method,} = req;
+    if (req.method === 'GET') {
+        const { id } = req.query;
+        
+        if (!id) {
+            return res.status(400).json({ error: 'Job ID is required' });
+        }
 
-    await connectToDatabase();
-
-    if (method === 'GET') {
         try {
-            const job = await Job.findById(id);
+            const job = await Job.find();
             if (!job) {
-                return res.status(404).json({ message: 'Job not found' });
+                return res.status(404).json({ error: 'Job not found' });
             }
-            res.status(200).json(job);
+            return res.status(200).json(job);
         } catch (error) {
-            console.error('Error fetching job:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            console.error('Error fetching job:', error.message);
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        res.setHeader('Allow', ['GET']);
-        res.status(405).end(`Method ${method} Not Allowed`);
+        return res.status(405).json({ error: 'Method Not Allowed' });
     }
 }

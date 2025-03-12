@@ -1,57 +1,34 @@
-// // pages/profile.js
-// import { useEffect, useState } from 'react';
-
-// export default () => {
-//   const [userProfile, setUserProfile] = useState(null);
-//   const [errorMessage, setErrorMessage] = useState('');
-
-//   useEffect(() => {
-//     const fetchProfile = async () => {
-//       const username = localStorage.getItem('username');
-
-//       const response = await fetch(`/api/auth/profile?username=${username}`);
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         setUserProfile(data.data);
-//       } else {
-//         const errorData = await response.json();
-//         setErrorMessage(errorData.message);
-//       }
-//     };
-
-//     fetchProfile();
-//   }, []);
-
-//   return (
-//     <div>
-//       {errorMessage && <p>{errorMessage}</p>}
-//       {userProfile ? (
-//         <div>
-//           <h2>User Profile</h2>
-//           <p>Username: {userProfile.username}</p>
-//           <p>Email: {userProfile.email}</p>
-//           {/* Display other profile information as needed */}
-//         </div>
-//       ) : (
-//         <p>Loading profile...</p>
-//       )}
-//     </div>
-//   );
-// };
-
-
 // pages/Profile.js
 import { useEffect, useState } from 'react';
 import GeneralInfo from '../components/Profile/GeneralInfo';
 import CollegeInfo from '../components/Profile/CollegeInfo';
 import AcademicInfo from '../components/Profile/AcademicInfo';
+import ChangePassword from '../components/Profile/ChangePassword';
+
+export async function getServerSideProps({ req, res }) {
+  // Check if the token exists in cookies
+  const token = req.cookies.token;
+
+  if (!token) {
+    // If no token, redirect to login page
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  // If authenticated, return page props
+  return {
+    props: {},
+  };
+}
 
 const Profile = () => {
   const [userProfile, setUserProfile] = useState({
     username: '',
     email: '',
-    // Initialize other fields as empty strings
     firstName: '',
     middleName: '',
     lastName: '',
@@ -65,21 +42,20 @@ const Profile = () => {
     batchOfPassing: '',
     degree: '',
     department: '',
-    cgpa: Array(8).fill(''), // Placeholder for CGPA for all semesters
+    cgpa: Array(8).fill(''),
     tenthPercent: '',
     twelfthPercent: '',
     tenthBoard: '',
     twelfthBoard: '',
   });
+  
   const [errorMessage, setErrorMessage] = useState('');
   const [activeTab, setActiveTab] = useState('general');
 
   useEffect(() => {
     const fetchProfile = async () => {
       const username = localStorage.getItem('username');
-
       const response = await fetch(`/api/auth/profile?username=${username}`);
-
       if (response.ok) {
         const data = await response.json();
         setUserProfile(data.data);
@@ -88,42 +64,80 @@ const Profile = () => {
         setErrorMessage(errorData.message);
       }
     };
-
     fetchProfile();
   }, []);
 
-  return (
-    <div className="container mx-auto p-6">
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-      <p className="mb-2">Username: {userProfile.username}</p>
-      <p className="mb-4">Email: {userProfile.email}</p>
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserProfile({
+      ...userProfile,
+      [name]: value
+    });
+  };
 
-      <div className="tabs">
+  return (
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+  
+      {/* Tabs */}
+      <div className="flex justify-between border-b-2 border-gray-200 mb-8">
         <button
-          className={`tab tab-lifted ${activeTab === 'general' ? 'tab-active' : ''}`}
+          className={`py-2 flex-grow text-center text-lg font-medium 
+          ${activeTab === 'general' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('general')}
         >
           General Information
         </button>
         <button
-          className={`tab tab-lifted ${activeTab === 'college' ? 'tab-active' : ''}`}
+          className={`py-2 flex-grow text-center text-lg font-medium 
+          ${activeTab === 'college' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('college')}
         >
           College Information
         </button>
         <button
-          className={`tab tab-lifted ${activeTab === 'academic' ? 'tab-active' : ''}`}
+          className={`py-2 flex-grow text-center text-lg font-medium 
+          ${activeTab === 'academic' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('academic')}
         >
           Academic Information
         </button>
+        <button
+          className={`py-2 flex-grow text-center text-lg font-medium 
+          ${activeTab === 'changePassword' ? 'border-b-4 border-blue-600 text-blue-600' : 'text-gray-600'}`}
+          onClick={() => setActiveTab('changePassword')}
+        >
+          Change Password
+        </button>
       </div>
 
-      <div className="mt-6">
-        {activeTab === 'general' && <GeneralInfo userProfile={userProfile} />}
-        {activeTab === 'college' && <CollegeInfo userProfile={userProfile} />}
-        {activeTab === 'academic' && <AcademicInfo userProfile={userProfile} />}
+      {/* Content Area */}
+      <div className="bg-white rounded-lg p-6 shadow-md">
+        {activeTab === 'general' && (
+          <GeneralInfo 
+            userProfile={userProfile} 
+            handleInputChange={handleInputChange} 
+          />
+        )}
+        {activeTab === 'college' && (
+          <CollegeInfo 
+            userProfile={userProfile} 
+            handleInputChange={handleInputChange} 
+          />
+        )}
+        {activeTab === 'academic' && (
+          <AcademicInfo 
+            userProfile={userProfile} 
+            handleInputChange={handleInputChange} 
+          />
+        )}
+        {activeTab === 'changePassword' && (
+          <ChangePassword 
+            userProfile={userProfile}
+            handleInputChange={handleInputChange} 
+          />
+        )}
+
       </div>
     </div>
   );

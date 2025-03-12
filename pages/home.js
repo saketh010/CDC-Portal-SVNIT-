@@ -1,143 +1,143 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
+export async function getServerSideProps({ req, res }) {
+  // Check if the token exists in cookies
+  const token = req.cookies.token;
 
-export default function HomePage() {
-    // Sample data for multiple cards
-    const cards = [
-        {
-            id: 1,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-        {
-            id: 2,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-        {
-            id: 3,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-        {
-            id: 4,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-        {
-            id: 5,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-        {
-            id: 6,
-            title: 'Shoes!',
-            description: 'If a dog chews shoes whose shoes does he choose?',
-            imageUrl: 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp',
-        },
-    ];
+  if (!token) {
+    // If no token, redirect to login page
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
-    return (
-        <div>
-            {/* Map over the cards array to return multiple card components */}
-            <div className="flex justify-center items-center py-5">
-                <div className="join">
-                    <input className="join-item btn" type="radio" name="options" aria-label="Open" />
-                    <input className="join-item btn" type="radio" name="options" aria-label="Closed Jobs" />
-                    <input className="join-item btn" type="radio" name="options" aria-label="All Jobs" />
-                </div>
-            </div>
-            <div className="flex py-1 flex-wrap justify-center gap-4">
-                {cards.map((card) => (
-                    <div key={card.id} className="card card-compact bg-base-100 w-80 shadow-md">
-                        <figure>
-                            <img
-                                src={card.imageUrl}
-                                alt={card.title}
-                            />
-                        </figure>
-                        <div className="card-body">
-                            <h2 className="card-title">{card.title}</h2>
-                            <p>{card.description}</p>
-                            <div className="card-actions justify-end flex gap-2">
-                                <button className="btn btn-important">Apply</button>
-                                <button className="btn bg-red-600 text-white hover:bg-red-400">Withdraw</button>
-                            </div>
-
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+  // If authenticated, return page props
+  return {
+    props: {},
+  };
 }
 
-// //when mongodb active use below
-// // pages/index.js
+export default function UserJobListPage(req) {
+  const router = useRouter();
+  const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("all"); // 'all', 'open'
 
-// import { useEffect, useState } from 'react';
-// import Link from 'next/link';
 
-// export default function HomePage() {
-//     const [jobs, setJobs] = useState([]);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState(null);
 
-//     useEffect(() => {
-//         const fetchJobs = async () => {
-//             try {
-//                 const res = await fetch('/api/jobs');
-//                 if (!res.ok) {
-//                     throw new Error('Failed to fetch jobs');
-//                 }
-//                 const data = await res.json();
-//                 setJobs(data);
-//             } catch (err) {
-//                 setError(err.message);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
+  // Fetch jobs on page load
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/jobFetch");
+        const data = await res.json();
+        setJobs(data);
+        setFilteredJobs(data); // Set the filtered jobs initially to all jobs
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//         fetchJobs();
-//     }, []);
+    fetchJobs();
+  }, []);
 
-//     if (loading) {
-//         return <div>Loading...</div>;
-//     }
+  // Filter jobs based on the active tab
+  const filterJobs = (tab) => {
+    setActiveTab(tab);
+    if (tab === "open") {
+      setFilteredJobs(jobs.filter((job) => job.isOpen));
+    } else if (tab === "all") {
+      setFilteredJobs(jobs); // 'all' tab shows all jobs
+    }
+  };
 
-//     if (error) {
-//         return <div>Error: {error}</div>;
-//     }
+  // Toggle job status (admin closes/reopens jobs)
+  const toggleJobStatus = async (jobId) => {
+    try {
+      const updatedJobs = jobs.map((job) =>
+        job.id === jobId ? { ...job, isOpen: !job.isOpen } : job
+      );
+      setJobs(updatedJobs);
+      filterJobs(activeTab); // Update the filtered list based on the active tab
 
-//     return (
-//         <div>
-//             <div className="flex py-10 flex-wrap justify-center gap-4">
-//                 {jobs.map((job) => (
-//                     <div key={job._id} className="card card-compact bg-base-100 w-80 shadow-md">
-//                         <figure>
-//                             <img src={job.imageUrl || 'default-image-url.jpg'} alt={job.jobTitle} />
-//                         </figure>
-//                         <div className="card-body">
-//                             <h2 className="card-title">{job.jobTitle}</h2>
-//                             <p>{job.jobDescription.shortDescription}</p>
-//                             <div className="card-actions justify-end">
-//                                 <Link href={`/job/${job._id}`}>
-//                                     <button className="btn btn-important" onClick={() => router.push(`/job/${card._id}`)}>
-//                                     Apply
-//                                     </button>
-//                                 </Link>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// }
+      alert(
+        `Job has been ${
+          updatedJobs.find((job) => job.id === jobId).isOpen
+            ? "reopened"
+            : "closed"
+        } successfully.`
+      );
+    } catch (error) {
+      console.error("Error toggling job status:", error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen p-6 bg-gray-100">
+      {/* Radio Button Tabs for filtering jobs */}
+      <div className="flex justify-center items-center py-5">
+        <div className="join">
+          <input
+            className="join-item btn"
+            type="radio"
+            name="options"
+            id="open"
+            aria-label="Open Jobs"
+            checked={activeTab === "open"}
+            onChange={() => filterJobs("open")}
+          />
+          <input
+            className="join-item btn"
+            type="radio"
+            name="options"
+            id="all"
+            aria-label="All Jobs"
+            checked={activeTab === "all"}
+            onChange={() => filterJobs("all")}
+          />
+        </div>
+      </div>
+
+      <div className="flex py-1 flex-wrap justify-center gap-4">
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          filteredJobs.map((job) => (
+            <div
+              key={job.id}
+              className="card card-compact bg-base-100 w-80 shadow-md"
+            >
+              <figure className="h-48 w-full overflow-hidden">
+                <img
+                  src={job.imageLink}
+                  alt={job.title}
+                  className="h-full w-full object-cover"
+                />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">{job.title}</h2>
+                <p>{job.description}</p>
+                <div className="card-actions justify-end flex gap-2">
+                  <button
+                    className="btn bg-blue-600 text-white"
+                    onClick={() => router.push(`/jobDetailPage/${job._id}`)}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

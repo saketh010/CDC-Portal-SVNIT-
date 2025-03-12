@@ -1,8 +1,5 @@
 // pages/api/auth/profile.js
-import connectToDatabase from '../../../lib/mongodb';
 import User from '../../../models/User';
-
-connectToDatabase();
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {

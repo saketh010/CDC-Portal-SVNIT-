@@ -38,7 +38,8 @@ export default async function handler(req, res) {
         sameSite: 'strict',
         path: '/',
       }));
-
+      
+      // For other users, return to the home page
       res.status(200).json({ message: 'Login successful', username: user.username });
     } catch (error) {
       console.error('Login error:', error);

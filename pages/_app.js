@@ -5,9 +5,13 @@ import Layout from '../components/Layout/Layout';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+     { pageProps.loginForm ? 
+      <Component {...pageProps} /> 
+        : 
+      <Layout><Component {...pageProps} /></Layout>}
+    </>
+
   );
 }
 
